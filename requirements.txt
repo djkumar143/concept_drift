@@ -1,0 +1,6 @@
+pytz
+numpy
+pandas
+scipy
+kafka-python-ng
+psycopg2-binary

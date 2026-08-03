@@ -1,0 +1,147 @@
+jobs/
+
+train_model.py
+        │
+        └── Run manually once
+
+streaming_prediction.py
+        │
+        └── Runs continuously
+
+feature_monitor.py
+        │
+        └── Runs continuously
+
+performance_monitor.py
+        │
+        └── Runs continuously
+
+retrain_model.py
+        │
+        └── Started automatically by performance_monitor.py
+
+
+
+
+
+
+Initial Training
+
+↓
+
+train_model.py
+
+↓
+
+Save lr_v1
+
+↓
+
+Create model_registry.json
+
+↓
+
+Start Streaming Services
+
+
+
+──────────────────────────────────────────────
+
+
+Features Producer
+
+↓
+
+Kafka (market_features)
+
+↓
+
+┌────────────────────────────────────┐
+│                                    │
+▼                                    ▼
+
+streaming_prediction.py        feature_monitor.py
+
+│                              │
+
+Predict                        Sliding Window
+
+│                              │
+
+Store Prediction               Run KSWIN
+
+│                              │
+
+PostgreSQL                     Feature Drift Alert
+
+│
+│
+Waiting
+
+
+──────────────────────────────────────────────
+
+
+Labels Producer
+
+↓
+
+Kafka (market_labels)
+
+↓
+
+performance_monitor.py
+
+↓
+
+Find prediction by eventID
+
+↓
+
+Update true_label
+
+↓
+
+Correct / Incorrect
+
+↓
+
+DDM
+
+↓
+
+Concept Drift?
+
+↓
+
+No
+
+↓
+
+Waiting
+
+
+OR
+
+
+YES
+
+↓
+
+Run retrain_model.py
+
+↓
+
+Train lr_v2
+
+↓
+
+Save lr_v2
+
+↓
+
+Update model_registry.json
+
+↓
+
+streaming_prediction.py automatically loads lr_v2 for future predictions

@@ -1,0 +1,41 @@
+project/
+│
+├── docker-compose.yml
+│
+├── Dockerfile.spark              # Spark image
+├── Dockerfile.python             # Python image
+├── requirements.txt
+├── model_registry.json
+│
+├── data/
+│   └── elec2.csv
+│
+├── jobs/
+│   ├── train_model.py
+│   ├── streaming_prediction.py
+│   ├── retrain_model.py
+│   ├── feature_monitor.py
+│   └── performance_monitor.py
+│
+├── simulator/
+│   └── produce_data.py
+│
+├── common/
+│   ├── preprocessing.py
+│   ├── database.py
+│   └── model_utils.py
+│
+├── postgres/
+│   └── init.sql                  # Creates database tables
+│
+├── models/
+│   ├── lr_v1/
+│   ├── lr_v2/
+│   └── ...
+│
+├── notebooks/
+│   └── model_experiment.ipynb
+│
+├── logs/                         # Optional
+│
+└── README.md
