@@ -10,6 +10,7 @@ def create_spark_session():
         .appName("feature_monitor") \
         .getOrCreate()
 
+#indivisual detectors for each feature
 detectors = {
     "nswprice": KSWINDetector(),
     "nswdemand": KSWINDetector(),
@@ -25,8 +26,9 @@ def process_batch(batch_df, batch_id):
         "vicprice",
         "vicdemand",
         "transfer"
-    ).collect()
+    ).collect() #records from all the driver nodes accumulated in a list at driver node
     
+    #use if want to evaluate all features together
     feature_results = {}
     
     for row in rows:
@@ -36,7 +38,7 @@ def process_batch(batch_df, batch_id):
                     f"{feature}: "
                     f"{detector.current_size()}/{detector.window_size}"
                 )
-                
+            #get the kswin results
             result = detector.update(row[feature])
             feature_results[feature] = result
             

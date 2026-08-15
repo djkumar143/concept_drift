@@ -1,10 +1,17 @@
+#for India's datetime
 from datetime import datetime
 import pytz
+
+#for logging info
 import logging
+
+#using python 3.8 for spark image. So, need to use Tuple instead of tuple
 from typing import Tuple
 import time
 
+#python driver for postgres
 import psycopg2
+
 from pyspark.sql import DataFrame
 
 logger = logging.getLogger(__name__)
@@ -28,7 +35,7 @@ POSTGRES_CONFIG = {
 
 TABLE_NAME = "market_features"
 
-# store predictions in the table
+# store predictions
 def write_predictions(df: DataFrame) -> None:
     df.write.mode("append").jdbc(
         url=POSTGRES_URL,
@@ -36,7 +43,7 @@ def write_predictions(df: DataFrame) -> None:
         properties=POSTGRES_PROPERTIES
     )
 
-# update true_label in the table
+# update true_label
 def update_true_label(
     eventID: str,
     true_label: str,
@@ -74,7 +81,7 @@ def update_true_label(
                 eventID
             )
             
-# get predicted value from the table           
+# get predicted label       
 def get_prediction(eventID:str)-> Tuple[str, str]:
     with psycopg2.connect(**POSTGRES_CONFIG) as conn:
         with conn.cursor() as cursor:
@@ -90,7 +97,7 @@ def get_prediction(eventID:str)-> Tuple[str, str]:
                     eventID,
                 )
             )
-            # fetchone(): returns a tuple, only one row at a time
+            # fetchone(): returns a single tuple    (predicted_label,model_version)
             # fetchall(): returns a list of tuples
             row = cursor.fetchone()
             
@@ -102,6 +109,7 @@ def get_prediction(eventID:str)-> Tuple[str, str]:
                 "model_version" : row[1]
             }
             
+# wait until atleast one prediction is available
 def wait_for_prediction():
     while True:
         with psycopg2.connect(**POSTGRES_CONFIG) as conn:
@@ -139,7 +147,7 @@ def get_retraining_status()-> bool:
             return row[0]
             
 
-# to start retraining the model
+# set status to start retraining
 def start_retraining()-> None:
     with psycopg2.connect(**POSTGRES_CONFIG) as conn:
         with conn.cursor() as cursor:
@@ -157,6 +165,7 @@ def start_retraining()-> None:
             )
             conn.commit()
 
+# set status to finish retraining
 def finish_retraining()-> None:
     with psycopg2.connect(**POSTGRES_CONFIG) as conn:
         with conn.cursor() as cursor:

@@ -17,6 +17,7 @@ india_tz = pytz.timezone("Asia/Kolkata")
 
 eddm = EDDMDetector()
 
+#wait until atleast one prediction is available
 wait_for_prediction()
 
 def create_spark_session():
@@ -51,6 +52,7 @@ def process_batch(batch_df, batch_id):
             else:
                 start_retraining()
                 
+                #retrain model in parallel
                 subprocess.Popen([
                     "/opt/spark/bin/spark-submit",
                     "--conf",
@@ -89,6 +91,7 @@ def main():
         if batch_df.isEmpty():
             return
         process_batch(batch_df, batch_id)
+        #just so that it runs a little slower than prediction
         time.sleep(1)
     
     query = parsed_df.writeStream \

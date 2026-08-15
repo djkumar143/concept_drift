@@ -1,6 +1,6 @@
 from pyspark.sql import SparkSession
 from pyspark.ml.evaluation import MulticlassClassificationEvaluator
-from pyspark.ml.classification import LogisticRegression
+from pyspark.ml.classification import LogisticRegression #estimator(used for training)
 from utils.preprocessing import prepare_features
 from pyspark.sql.functions import when, col, lit
 from pyspark.sql.types import IntegerType

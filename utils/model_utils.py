@@ -2,7 +2,7 @@ import json
 import logging
 from pathlib import Path
 
-from pyspark.ml.classification import LogisticRegressionModel
+from pyspark.ml.classification import LogisticRegressionModel # trained model(used for prediction)
 
 logger = logging.getLogger(__name__)
 
@@ -11,20 +11,20 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 MODEL_REGISTRY = PROJECT_ROOT / "model_registry.json"
 MODELS_DIR = PROJECT_ROOT / "models"
 
+#for faster loading of the model
 _cached_model = None
 _cached_version = None
-
 
 def read_model_registry() -> dict:
     with open(MODEL_REGISTRY, "r") as file:
         return json.load(file)
 
-
+#use in streaming_predictions
 def get_current_model_version() -> str:
     registry = read_model_registry()
     return registry["current_version"]
 
-
+#use in streaming_predictions
 def load_current_model() -> LogisticRegressionModel:
     global _cached_model
     global _cached_version

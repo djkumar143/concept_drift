@@ -41,6 +41,7 @@ def main():
         col("true_label").isNotNull()
     )
     
+    # retrain only if atleast 2000 true labels available
     if df.count() < 2000:
         logger.info("Not enough labelled data for retraining.")
         finish_retraining()
@@ -73,6 +74,7 @@ def main():
     )
     
     try:
+        #train model
         model = lr.fit(training_df)
         
         with open("/app/model_registry.json","r") as file:
@@ -80,21 +82,23 @@ def main():
             
         retraining_model_version = model_info["version"] + 1
         model_name = f"lr_v{retraining_model_version}"
-            
+        
+        #save model
         model.write().overwrite().save(f"/app/models/{model_name}")
         new_model = {
             "current_version" : model_name,
             "version": retraining_model_version
         }
+        #update model_registry
         with open("/app/model_registry.json", "w") as file:
             json.dump(new_model,file, indent = 4)
+        logger.info("New model successfully trained and activated.")
         
     except Exception:
         logger.exception("Retraining Failed.")
         
     finally:
         finish_retraining()
-        logger.info("New model successfully trained and activated.")
         spark.stop()
     
 if __name__ == "__main__":

@@ -18,9 +18,12 @@ def create_spark_session():
 
 
 def create_prediction_dataframe(batch_df):
+    #prepare features for prediction
     prediction_features = prepare_features(batch_df)
+    #load current model
     model = load_current_model()
     model_version = get_current_model_version()
+    #predict label
     prediction_df = model.transform(prediction_features)
     output_df = (
         batch_df.join(
@@ -105,7 +108,7 @@ def main():
         if batch_df.isEmpty():
             return
         output_df = create_prediction_dataframe(batch_df)
-        
+        #write to postgres
         write_predictions(output_df)
         
     query = parsed_df.writeStream \

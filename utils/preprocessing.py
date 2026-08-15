@@ -1,8 +1,8 @@
-#convert incoming Spark dataframes into the format required by the model
 from pyspark.ml.feature import VectorAssembler
 from pyspark.sql.functions import col
 
 
+# from spark DataFrame, prepare feature vector and return along with either label or eventID
 def prepare_features(df, label_col = None):
     assembler = VectorAssembler(
         inputCols=[

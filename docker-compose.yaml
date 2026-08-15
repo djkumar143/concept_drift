@@ -212,7 +212,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.python
-    image: python_image # for creating image with custom name, <projectName_serviceName_1> by default
+    image: python_image # for creating image with custom name, otherwise <projectName_serviceName_1> by default
     container_name: features_producer
     depends_on:
       kafka1:
@@ -276,10 +276,10 @@ services:
       - /opt/spark/bin/spark-submit
       - --conf
       - spark.jars.ivy=/tmp/.ivy2
-      - --packages # --packages downloads external jars
+      - --packages # --packages is used to downloads external jars
       - org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.6,org.postgresql:postgresql:42.7.4
       - /app/jobs/streaming_predictions.py
-      #kafka connector and jdbc driver because the spark job is reading from kafka and writing to postgres
+      #kafka connector and jdbc driver because this spark job is reading from kafka and writing to postgres
     volumes:
       - ./jobs:/app/jobs
       - ./models:/app/models
@@ -297,7 +297,7 @@ services:
     image: spark_image
     container_name: train_model
     environment:
-      PYTHONPATH: /app # making sure the current dir for utils import to work
+      PYTHONPATH: /app
     command:
       - /opt/spark/bin/spark-submit
       - /app/jobs/train_model.py
@@ -317,7 +317,7 @@ services:
     container_name: feature_monitor
     restart: always
     environment:
-      PYTHONPATH: /app
+      PYTHONPATH: /app # similar to using sys.path.append() or sys.path.insert() directly in the code file
     depends_on:
       kafka1:
         condition: service_healthy
@@ -368,6 +368,8 @@ services:
     volumes:
       - ./utils:/app/utils
       - ./jobs:/app/jobs
+      - ./models:/app/models
+      - ./model_registry.json:/app/model_registry.json
     networks:
       - kafka-net
     
