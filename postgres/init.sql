@@ -1,4 +1,4 @@
-CREATE TABLE market_features(
+CREATE TABLE market_data(
     eventID VARCHAR(20) PRIMARY KEY,
     nswprice DOUBLE PRECISION,
     nswdemand DOUBLE PRECISION,

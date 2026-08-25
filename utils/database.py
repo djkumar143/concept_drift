@@ -33,7 +33,7 @@ POSTGRES_CONFIG = {
     "password": "postgres"
 }
 
-TABLE_NAME = "market_features"
+TABLE_NAME = "market_data"
 
 # store predictions
 def write_predictions(df: DataFrame) -> None:
@@ -55,7 +55,7 @@ def update_true_label(
 
             cursor.execute(
                 """
-                UPDATE market_features
+                UPDATE market_data
                 SET
                     true_label = %s,
                     label_arrival_time = %s
@@ -90,7 +90,7 @@ def get_prediction(eventID:str)-> Tuple[str, str]:
                 SELECT
                     predicted_label,
                     model_version
-                FROM market_features
+                FROM market_data
                 WHERE eventID = %s
                 """,
                 (
@@ -118,7 +118,7 @@ def wait_for_prediction():
                     """
                     SELECT COUNT(*)
                     FROM
-                    market_features
+                    market_data
                     """
                 )
                 count = cursor.fetchone()[0]

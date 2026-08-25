@@ -33,7 +33,7 @@ def main():
     df = spark.read \
         .jdbc(
             url = POSTGRES_URL,
-            table = "market_features",
+            table = "market_data",
             properties = POSTGRES_PROPERTIES
         )
         
